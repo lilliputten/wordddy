@@ -1,0 +1,146 @@
+# @module pyproject.toml
+# @changed 2024.03.28, 11:50
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wordddy-app"
+authors = [
+  { name="Chris Mutel", email="cmutel@gmail.com" },
+  { name="Igor Mikheev", email="lilliputten@gmail.com" }
+]
+maintainers = [
+  { name="Chris Mutel", email="cmutel@gmail.com" },
+  { name="Igor Mikheev", email="lilliputten@gmail.com" }
+]
+description = "Django app for event wordddy-app and billing "
+readme = "README.md"
+dynamic = ["version"]
+# Add here all kinds of additional classifiers as defined under
+# https://pypi.org/classifiers/
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Framework :: Django",
+    "Framework :: Django :: 5.0",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Topic :: Internet :: WWW/HTTP",
+    "Topic :: Internet :: WWW/HTTP :: Dynamic Content"
+]
+requires-python = ">=3.10"
+dependencies = [
+    "crispy-bootstrap5>=2024.2",
+    "django-compressor>=4.4",
+    "django-crispy-forms>=2.1",
+    "django-environ>=0.11.2",
+    "django-livereload-server>=0.5.1",
+    "django-preferences>=1.0.0",
+    "django-registration>=3.4", # @see https://django-registration.readthedocs.io
+    "django-timezone-field>=3.1",
+    "django>=5.0",
+    "fpdf2>=2.7.8", # @see https://github.com/py-pdf/fpdf2
+    "requests",
+    "sendgrid>=6.11.0", # @see https://docs.sendgrid.com/for-developers/sending-email/django
+    "stripe>=8.9.0",
+    "beautifulsoup4>=4.12.3",  # Html content prettifier
+]
+
+[project.urls]
+source = "https://github.com/Depart-de-Sentier/wordddy-app"
+homepage = "https://github.com/Depart-de-Sentier/wordddy-app"
+tracker = "https://github.com/Depart-de-Sentier/wordddy-app/issues"
+
+[project.optional-dependencies]
+# Getting recursive dependencies to work is a pain, this
+# seems to work, at least for now
+testing = [
+    "wordddy-app",
+    "pytest",
+    "pytest-cov",
+    "python-coveralls"
+]
+dev = [
+    "build",
+    "pre-commit",
+    "pylint",
+    "pytest",
+    "pytest-cov",
+    "pytest-randomly",
+    "setuptools",
+    # "blue>=0.9.1",  # UNUSED: Python formatter, based on black, but wit a support (at least) for single quotes coding style
+    "black>=22.3",
+    "pyright>=1.1.353",  # TODO: Linter for vim environment. Remove from shared deps
+    "djlint>=1.34.1",  # TODO: Linter for vscode. Remove from shared deps (?)
+]
+
+[tool.djlint]
+# @see https://www.djlint.com/docs/linter/
+# @see https://www.djlint.com/docs/configuration/
+# ignore="H023"
+# H023: Do not use entity references
+exclude = [
+  "**/migrations",
+  "static/CACHE",
+  "static/vendor",
+  "src/vendor",
+  "node_modules",
+]
+
+[tool.black]
+line-length = 120
+target-version = ['py37']
+include = "\\.py$"
+force-exclude = '''
+^/.*/migrations/
+| ^/.git/
+| ^/node_modules/
+| ^/.vscode/
+| ^/.venv/
+'''
+
+[tool.setuptools]
+license-files = ["LICENSE"]
+include-package-data = true
+packages = ["wordddy-app"]
+
+[tool.setuptools.dynamic]
+version = {attr = "wordddy-app.__version__"}
+
+[tool.pytest.ini_options]
+addopts = "--cov wordddy-app --cov-report term-missing --verbose"
+norecursedirs = [
+    "dist",
+    "build",
+    ".tox"
+]
+testpaths = ["tests/*.py"]
+
+[tool.flake8]
+# Some sane defaults for the code style checker flake8
+max_line_length = 88
+extend_ignore = ["E203", "W503"]
+# ^  Black-compatible
+#    E203 and W503 have edge cases handled by black
+exclude = [
+    ".tox",
+    "build",
+    "dist",
+    ".eggs",
+    "docs/conf.py",
+]
+
+[tool.isort]
+profile = "black"
+line_length = 88
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+ensure_newline_before_comments = true
